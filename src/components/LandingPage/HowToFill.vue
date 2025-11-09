@@ -29,7 +29,7 @@ export default {
 
 <style scoped>
 .how-to-fill {
-  background-color: #333;
+  background-color: #EF874B;
   color: white;
   padding: 40px 20px;
 }
@@ -54,7 +54,7 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #c95111;
+  background-color: #FCDA7B;
   color: white;
   font-weight: bold;
   font-size: 1.2em;

@@ -8,22 +8,26 @@
     </div>
 
     <HowToFill />
+    <AboutCAWI/>>
   </div>
 </template>
 
 <script>
 import TheHeader from './TheHeader.vue';
 import HowToFill from './HowToFill.vue';
+import AboutCAWI from './AboutCAWI.vue';
 
 export default {
   name: 'LandingPage',
   components: {
     TheHeader,
-    HowToFill
+    HowToFill,
+    AboutCAWI
   },
   emits: ['start-questionnaire']
 };
 </script>
+
 
 <style scoped>
 .landing-page-container {
@@ -34,7 +38,7 @@ export default {
 .image-stack {
   position: relative;
   width: 100%;
-  max-width: 800px; /* Sesuaikan dengan kebutuhan layout Anda */
+  max-width: 100%; /* Sesuaikan dengan kebutuhan layout Anda */
   margin: 20px auto;
   display: flex;           /* Membantu menengahkan konten jika perlu */
   justify-content: center;
