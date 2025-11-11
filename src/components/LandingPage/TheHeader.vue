@@ -8,7 +8,7 @@
       <p class="description-text">
         Mari berpartisipasi dalam pengumpulan data sosial ekonomi untuk mendukung riset lapangan PKL 65 Polstat STIS.
       </p>
-      <button @click="$emit('start-questionnaire')" class="start-button">
+      <button @click="$emit('start-questionnaire')" class="start-button hover:bg-amber-500">
         Mulai Isi Kuesioner
       </button>
     </div>

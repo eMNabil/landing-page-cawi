@@ -1,35 +1,32 @@
 <template>
   <div id="app">
-    <TheQuestionnaire /> 
+    <Navbar v-if="showNavbar" />
+    <router-view class="pt-16" />
   </div>
 </template>
 
-<script>
-// Koreksi 1 & 2: Tambahkan path relatif (./components/) dan koreksi ejaan (Questionnaire)
-import TheQuestionnaire from './components/Kuisioner.vue'; 
+<script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import Navbar from '@/components/Navbar/Navbar.vue' 
 
-export default {
-  name: 'App',
-  components: {
-    // Koreksi 3: Pastikan nama komponen di sini (TheQuestionnaire) sama dengan nama impor (baris 6)
-    TheQuestionnaire, 
-  },
-};
+const route = useRoute()
+
+const showNavbar = computed(() => route.meta?.showNavbar === true)
 </script>
 
 <style>
-/* * Gaya Global (Opsional): 
- * Di sini Anda bisa menaruh CSS yang berlaku untuk seluruh halaman, 
- * seperti reset CSS, definisi font, dan warna dasar.
- */
 #app {
-  /* Pastikan elemen akar memiliki lebar penuh */
-  min-height: 100vh; 
-  /* Terapkan font default untuk seluruh aplikasi */
+  min-height: 100vh;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  margin: 0;
+  padding: 0;
+}
+
+body {
   margin: 0;
   padding: 0;
 }

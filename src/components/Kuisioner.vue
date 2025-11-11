@@ -66,47 +66,38 @@ export default {
   methods: {
     async startQuestionnaire() {
       try {
-        const token = this.$route.query.data;
-
-        // Ambil token JWT yang mungkin sudah tersimpan sebelumnya
-        let authToken = localStorage.getItem('authToken');
-
-        // Siapkan konfigurasi header jika token sudah ada
-        const config = authToken
-          ? {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-          : {};
-
-        // Kirim request ke backend
+        // localStorage.removeItem('jwt');
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('data');
+        
+        const jwt = localStorage.getItem('jwt');
+        
+        const headers = jwt ? { Authorization: `Bearer ${jwt}` } : {};
+        
         const response = await axios.post(
           'http://localhost:3000/api/link/get-form',
           { token },
-          config
+          { headers }
         );
-
-        // Kalau backend kasih status 200 dan ada JWT baru
-        if (response.data.STATUS_CODES === 200) {
-          // Kalau backend kirim token baru (isUsed = 0 kasus pertama)
-          if (response.data.token) {
-            localStorage.setItem('authToken', response.data.token);
+        
+        const data = response.data;
+        
+        if (data.STATUS_CODES === 200) {
+          if (data.token) {
+            localStorage.setItem('jwt', data.token);
           }
 
-          // Redirect ke tautan form
-          window.location.href = `${response.data.tautanForm}`;
+          window.location.href = data.tautanForm;
         } else {
-          // Token invalid atau kadaluarsa
-          localStorage.removeItem('authToken');
-          this.$router.push('/dashboard');
+          localStorage.removeItem('jwt');
+          window.location.href = '/dashboard';
         }
       } catch (error) {
-        console.error('Error saat memulai kuisioner:', error);
-        localStorage.removeItem('authToken');
-        this.$router.push('/dashboard');
+        console.error('Gagal memproses tautan:', error);
+        localStorage.removeItem('jwt');
+        window.location.href = '/dashboard';
       }
+
     },
     nextStep() {
       if (this.currentStep < this.totalFormSteps) {

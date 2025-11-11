@@ -1,14 +1,33 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import App from '../App.vue';
+import Login from '@/views/LoginPage.vue';
+import TheQuestionnaire from '@/components/Kuisioner.vue';
+import RespondentPage from '@/views/RespondentPage.vue';
+import TokenManagement from '@/views/TokenManagement.vue';
 
 const routes = [
   {
-    path: '/dashboard',          // http://localhost:5174/
+    path: '/login',
     name: 'Home',
-    component: App,     // render App.vue
-  },{
+    component: Login,
+    meta: { showNavbar: true },
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: TheQuestionnaire,
+    meta: { showNavbar: false },
+  },
+  {
+    path: '/token',
+    name: 'Token Management',
+    component: RespondentPage,
+    meta: { showNavbar: true },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/dashboard',
+    meta: { showNavbar: false },
   },
 ];
 
