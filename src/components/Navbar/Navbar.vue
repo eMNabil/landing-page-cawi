@@ -9,16 +9,17 @@
 
                 <div class="hidden md:flex space-x-6">
                     <router-link v-for="route in navbarRoutes" :key="route.path" :to="route.path"
+                        v-if="!route.meta?.requiresAuth || isAuth"
                         class="text-gray-700 hover:text-blue-600 font-medium"
                         :class="{ 'text-blue-600 font-semibold': isActive(route.path) }">
                         {{ route.name }}
                     </router-link>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-4">
-                    <span class="text-gray-600 text-sm">Halo, Admin</span>
-                    <button @click="logout"
-                        class="bg-red-500 text-white px-3 py-1.5 rounded-md hover:bg-red-600 text-sm">
+                <div class="hidden md:flex items-center space-x-4" v-if="isAuth">
+                    <span class="text-gray-600 text-sm">Halo, {{ userName }}</span>
+                    <button @click="handleLogout"
+                        class="bg-red-500 text-white px-3 py-1.5 rounded-md hover:bg-red-600 text-sm transition-colors">
                         Logout
                     </button>
                 </div>
@@ -55,6 +56,9 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 const isOpen = ref(false)
+import { useAuth } from '@/composables/useAuth'
+
+const auth = useAuth()
 
 const navbarRoutes = computed(() =>
     router.getRoutes().filter(r => r.meta?.showNavbar)
@@ -62,7 +66,17 @@ const navbarRoutes = computed(() =>
 
 const isActive = (path) => route.path === path
 
-const logout = () => {
-    alert('Logout berhasil (contoh).')
+const isAuth = auth.isAuthenticated()
+
+// userName from localStorage adminUser if available
+const adminUser = ref(null)
+if (localStorage.getItem('adminUser')) {
+    try { adminUser.value = JSON.parse(localStorage.getItem('adminUser')) } catch (e) { adminUser.value = null }
+}
+const userName = computed(() => adminUser.value?.name || adminUser.value?.username || 'Admin')
+
+const handleLogout = () => {
+    auth.logout()
+    router.push('/login')
 }
 </script>

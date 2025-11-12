@@ -49,6 +49,11 @@
                     </p>
                 </div>
 
+                <!-- Error Alert -->
+                <div v-if="loginError" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <p class="text-red-700 font-semibold">{{ loginError }}</p>
+                </div>
+
                 <!-- Login Card -->
                 <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-orange-100">
                     <div class="space-y-6">
@@ -113,7 +118,7 @@
                             </button>
                         </div>
 
-                        <button @click="handleSubmit" :disabled="isLoading"
+                        <button type="button" @click="handleSubmit" :disabled="isLoading"
                             class="w-full bg-gradient-to-l from-orange-700 via-orange-500 cursor-pointer hover:bg-amber-50 to-red-100  text-white font-bold py-3.5 px-6 rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group">
                             <span class="relative z-10 flex items-center justify-center gap-2">
                                 <svg v-if="isLoading" class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -161,35 +166,60 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+
 export default {
     name: 'LoginPage',
-    data() {
-        return {
-            showPassword: false,
-            formData: { username: '', password: '' },
-            isLoading: false,
-            rememberMe: false
-        };
-    },
-    methods: {
-        handleSubmit() {
-            if (!this.formData.username || !this.formData.password) {
-                alert('Mohon isi username dan password!');
-                return;
+    setup() {
+        const auth = useAuth()
+        const router = useRouter()
+        const showPassword = ref(false)
+        const formData = ref({ username: '', password: '' })
+        const isLoading = ref(false)
+        const rememberMe = ref(false)
+        const loginError = ref('')
+
+        const handleSubmit = async () => {
+            if (!formData.value.username || !formData.value.password) {
+                loginError.value = 'Mohon isi username dan password!'
+                return
             }
-            this.isLoading = true;
-            setTimeout(() => {
-                alert('Login successful!');
-                this.isLoading = false;
-            }, 1500);
-        },
-        handleKeyPress(e) {
+
+            isLoading.value = true
+            loginError.value = ''
+
+            console.log('[LoginPage] calling auth.login with', formData.value)
+            const result = await auth.login(formData.value.username, formData.value.password)
+            console.log('[LoginPage] login result', result)
+                if (result.success) {
+                    // redirect to Token Management page
+                    router.push('/token-management')
+            } else {
+                loginError.value = result.message || 'Login gagal'
+            }
+
+            isLoading.value = false
+        }
+
+        const handleKeyPress = (e) => {
             if (e.key === 'Enter') {
-                this.handleSubmit();
+                handleSubmit()
             }
         }
+
+        return {
+            showPassword,
+            formData,
+            isLoading,
+            rememberMe,
+            loginError,
+            handleSubmit,
+            handleKeyPress,
+        }
     }
-};
+}
 </script>
 
 <style scoped>

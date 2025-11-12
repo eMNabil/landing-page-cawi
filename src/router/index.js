@@ -1,39 +1,54 @@
 // src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/views/LoginPage.vue';
-import TheQuestionnaire from '@/components/Kuisioner.vue';
-import RespondentPage from '@/views/RespondentPage.vue';
-import TokenManagement from '@/views/TokenManagement.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import Login from '@/views/LoginPage.vue'
 
 const routes = [
   {
     path: '/login',
-    name: 'Home',
+    name: 'Login',
     component: Login,
-    meta: { showNavbar: true },
+    meta: { requiresAuth: false, showNavbar: true },
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: TheQuestionnaire,
-    meta: { showNavbar: false },
+    component: () => import('@/views/DashboardPage.vue'),
+    meta: { requiresAuth: true, showNavbar: false },
   },
   {
-    path: '/token',
-    name: 'Token Management',
-    component: RespondentPage,
-    meta: { showNavbar: true },
+    path: '/token-management',
+    name: 'TokenManagement',
+    component: () => import('@/views/TokenManagement.vue'),
+    meta: { requiresAuth: true, showNavbar: true },
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/dashboard',
-    meta: { showNavbar: false },
+    redirect: '/login',
   },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
-export default router;
+// Simple guard using localStorage token (accessToken or token)
+router.beforeEach((to, from, next) => {
+  const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token')
+  const requiresAuth = to.meta.requiresAuth ?? true
+
+  if (requiresAuth && !accessToken) {
+    return next('/login')
+  }
+
+  // Do NOT auto-redirect authenticated users away from /login.
+  // This allows visits to the login page even when already authenticated.
+  // If you want to prevent access, uncomment the redirect below.
+  // if (to.path === '/login' && accessToken) {
+  //   return next('/dashboard')
+  // }
+
+  next()
+})
+
+export default router
