@@ -94,9 +94,10 @@ export default {
 }
 
 .section-title {
-  color: #C95111;
-  font-size: 2.5em;
-  margin-bottom: 15px;
+  color: #ED652A;
+  font-size: 3em;
+  margin-top: 0;
+  margin-bottom: 1px;
   font-family: rakkas, cursive;
 }
 

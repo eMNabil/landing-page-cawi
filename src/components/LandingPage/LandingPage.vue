@@ -1,12 +1,13 @@
 <template>
   <div class="landing-page-container">
-    <TheHeader @start-questionnaire="$emit('start-questionnaire')" />
-    
-    <div class="image-stack">
-      <img class="warna-bg" src="../../assets/gambar-warna.png" alt="Gambar Warna" />
-      <img class="candi-image" src="../../assets/candi.png" alt="Gambar Candi Prambanan" />
+    <div class="header-section">
+      <TheHeader @start-questionnaire="$emit('start-questionnaire')" />
+      
+      <div class="image-stack">
+        <img class="warna-bg" src="../../assets/gambar-warna.png" alt="Gambar Warna" />
+        <img class="candi-image" src="../../assets/candi.png" alt="Gambar Candi Prambanan" />
+      </div>
     </div>
-
     <HowToFill />
     <AboutCAWI/>>
   </div>
@@ -42,6 +43,7 @@ export default {
 
 /* Container untuk menumpuk gambar */
 .image-stack {
+  padding-top: 4em;
   position: relative;
   width: 100%;
   max-width: 100%; 
@@ -71,4 +73,9 @@ export default {
   height: auto;
   display: block;
 }
+
+.header-section {
+  position: relative;
+}
+
 </style>
