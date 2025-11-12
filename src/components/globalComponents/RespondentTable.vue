@@ -26,14 +26,20 @@
                         class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700">
                         Set Form Link
                     </button>
-                    <button @click="openSetLandingPageModal"
+                    <!-- <button @click="openSetLandingPageModal"
                         class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
-                        Set LandingPage Link
+                        Set LandingPage Link 
                     </button>
                     <button @click="respondenApi.generateToken"
                         class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
                         Generate Token
+                    </button> -->
+                    <button @click="openSetLandingPageAndGenerateToken"
+                      class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
+                      Set LandingPage Link dan Generate Token
                     </button>
+
+
                 </div>
 
             </div>
@@ -315,5 +321,19 @@ const confirmUpload = async () => {
     }
 }
 
+const openSetLandingPageAndGenerateToken = async () => {
+    try {
+        isEditing.value = false
+        Link.value = { link: '' }
+        showSetLandingPageLinkModal.value = true
+
+        await respondenApi.generateToken()
+
+        console.log('Modal Landing Page dibuka & Token berhasil digenerate!')
+    } catch (error) {
+        console.error('Gagal membuka modal atau generate token:', error)
+        alert('Terjadi kesalahan saat generate token!')
+    }
+}
 
 </script>

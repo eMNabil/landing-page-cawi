@@ -2,7 +2,7 @@
   <header class="header-section">
     <img class="batik-header" src="../../assets/header-batik.png" alt="Header Batik" />
     
-    <div class="text-content">
+    <div class="text-content" >
       <h1 class="welcome-text">Selamat Datang!</h1>
       <h2 class="title-text">Kuesioner CAWI PKL 65</h2>
       <p class="description-text">
@@ -23,44 +23,52 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Rakkas&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 .header-section {
   padding: 20px;
-  /* PERBAIKAN UTAMA: Gunakan text-align left untuk meratakan semua konten teks dan tombol inline */
-  text-align: left; 
+  text-align: left; /* Latar belakang putih transparan untuk keterbacaan */
 }
 
 /* Opsional: Jika Anda ingin membatasi lebar teks agar tidak terlalu panjang ke kanan di layar besar */
 .text-content {
-  max-width: 800px; /* Sesuaikan sesuai kebutuhan desain */
-  /* margin: 0 auto; */ /* Hapus komentar ini jika ingin blok teksnya ada di tengah, tapi isinya rata kiri */
+  max-width: auto; 
+  
 }
 
 .batik-header {
   width: 100%;
   height: auto;
-  margin-bottom: 20px; /* Memberi jarak antara batik dan teks */
+  margin-bottom: 20px;
+
 }
 
 .welcome-text {
-  color: #c95111;
-  font-size: 3em;
-  margin-bottom: 5px;
-  /* Memastikan tidak ada margin otomatis yang mengganggu */
+  color: #D46832;
+  font-size: 4.5em;
+  /* font-size: 75px; */
+  margin-bottom: 0;
   margin-left: 0; 
+  font-family: rakkas, cursive;
 }
 
 .title-text {
-  color: #333;
-  font-size: 4em;
+  color: #D46832;
+  font-size: 5em;
+  /* font-size: 96px; */
   margin-top: 0;
   margin-left: 0;
+  font-family: rakkas, cursive;
 }
 
 .description-text {
-  font-size: 1.1em;
-  color: #555;
-  max-width: 600px; /* Opsional: Membuat teks deskripsi tidak terlalu lebar agar mudah dibaca */
+  font-size: 2em;
+  /* font-size:32px; */
+  color: #D46832;
+  max-width: 900px; /* Opsional: Membuat teks deskripsi tidak terlalu lebar agar mudah dibaca */
   margin-left: 0;
+  font-family: 'Playfair Display', serif;
 }
 
 .start-button {
@@ -72,8 +80,9 @@ export default {
   font-size: 1.1em;
   cursor: pointer;
   margin-top: 20px;
-  /* Pastikan tombol tidak di-tengah-kan oleh margin auto jika ada style global */
   margin-left: 0; 
-  display: inline-block; /* Memastikan tombol patuh pada text-align parent-nya */
+  border-color: #c95111;
+  display: inline-block; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 </style>

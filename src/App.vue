@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navbar v-if="showNavbar" />
-    <router-view class="pt-16" />
+    <router-view />
   </div>
 </template>
 

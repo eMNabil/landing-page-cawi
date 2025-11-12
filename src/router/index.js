@@ -21,7 +21,7 @@ const routes = [
   {
     path: '/token',
     name: 'Token Management',
-    component: RespondentPage,
+    component: TokenManagement,
     meta: { showNavbar: true },
   },
   {
@@ -29,6 +29,13 @@ const routes = [
     redirect: '/dashboard',
     meta: { showNavbar: false },
   },
+  {
+    path: '/responden', // Ini adalah URL yang akan Anda gunakan
+    name: 'Responden',
+    component: RespondentPage,
+    // (Opsional) Jika halaman ini memerlukan login, tambahkan meta:
+    meta: { requiresAuth: true } 
+  }
 ];
 
 const router = createRouter({

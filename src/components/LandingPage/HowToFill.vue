@@ -4,9 +4,15 @@
     <p>Ikuti langkah-langkah berikut untuk mengisi kuesioner dengan mudah</p>
     <div class="steps-indicator">
       <div v-for="step in steps" :key="step.id" class="step-item">
-        <span class="step-number">{{ step.id }}</span>
-        <p class="step-description">{{ step.description }}</p>
-      </div>
+  <span
+    class="step-number"
+    :style="{ backgroundColor: getColor(step.id) }"
+  >
+    {{ step.id }}
+  </span>
+  <p class="step-description">{{ step.description }}</p>
+</div>
+
     </div>
   </section>
 </template>
@@ -23,19 +29,29 @@ export default {
         { id: 4, description: 'Kirim Jawaban: Klik tombol Kirim Jawaban untuk menyimpan data Anda.' },
       ],
     };
+  },
+  methods: {
+    getColor(id) {
+      const colors = ['#FCDA7B', '#50829B', '#748D63', '#8174A0']; // warna berbeda tiap step
+      return colors[(id - 1) % colors.length];
+    }
   }
 };
+
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Rakkas&display=swap');
+
 .how-to-fill {
   background-color: #EF874B;
   color: white;
   padding: 40px 20px;
 }
 .how-to-fill h3 {
-  font-size: 1.8em;
+  font-size: 2.8em;
   margin-bottom: 5px;
+  font-family: rakkas, cursive;
 }
 .steps-indicator {
   display: flex;
@@ -47,7 +63,7 @@ export default {
 .step-item {
   width: 150px;
 }
-.step-number {
+.step-number{
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -59,9 +75,12 @@ export default {
   font-weight: bold;
   font-size: 1.2em;
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  
 }
+
 .step-description {
   font-size: 0.9em;
-  color: #ccc;
+  color: #FFFBDF;
 }
 </style>
