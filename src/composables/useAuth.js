@@ -4,56 +4,42 @@ export const useAuth = () => {
   // Login: POST /auth/login -> { access_token }
   const login = async (username, password) => {
     try {
-      const response = await api.post('/auth/login', { username, password })
+      const response = await api.post('/auth/admin/login', { username, password })
       // Debug log server response
       console.log('[useAuth] login response.data:', response.data)
-      const accessToken = response.data.access_token || response.data.token || response.data.accessToken
+      
+      const accessToken = response.data.accessToken || response.data.token || response.data.access_token
+      const user = response.data.data.user
+      
       if (!accessToken) {
         return { success: false, message: 'No token returned from server' }
       }
 
-      // Save token (do not auto-fetch user here to avoid triggering 401 redirects)
+      // Save token and user data
       localStorage.setItem('accessToken', accessToken)
       console.log('[useAuth] saved accessToken:', accessToken)
-
-      // Validate token by calling /auth/me using native fetch to avoid axios response interceptor
-      try {
-        const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
-        const url = base.replace(/\/$/, '') + '/auth/me'
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        })
-
-        if (!res.ok) {
-          // token invalid
-          localStorage.removeItem('accessToken')
-          return { success: false, message: 'Token validation failed' }
-        }
-
-        const data = await res.json()
-        const userObj = data.user || data
-        if (userObj) localStorage.setItem('adminUser', JSON.stringify(userObj))
-
-        return { success: true, token: accessToken }
-      } catch (err) {
-        localStorage.removeItem('accessToken')
-        return { success: false, message: err.message || 'Token validation error' }
+      
+      // Save user data if provided by backend
+      if (user) {
+        localStorage.setItem('adminUser', JSON.stringify(user))
+        console.log('[useAuth] saved user data:', user)
       }
+
+      return { success: true, token: accessToken, user }
     } catch (error) {
       return { success: false, message: error.response?.data?.message || error.message || 'Login failed' }
     }
   }
 
-  const getCurrentUser = async () => {
+  const getCurrentUser = () => {
     try {
-      const res = await api.get('/auth/me')
-      return res.data.user || res.data
+      const userStr = localStorage.getItem('adminUser')
+      if (userStr) {
+        return JSON.parse(userStr)
+      }
+      return null
     } catch (error) {
-      // If 401, interceptor will redirect
+      console.error('[useAuth] Error parsing user data:', error)
       return null
     }
   }

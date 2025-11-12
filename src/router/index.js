@@ -13,7 +13,7 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/DashboardPage.vue'),
-    meta: { requiresAuth: true, showNavbar: false },
+    meta: { requiresAuth: false, showNavbar: false },
   },
   {
     path: '/token-management',
