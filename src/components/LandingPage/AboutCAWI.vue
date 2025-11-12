@@ -73,9 +73,12 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 .about-cawi-section {
   font-family: sans-serif;
   color: #333;
+  
 }
 
 /* --- Bagian Atas --- */
@@ -83,19 +86,27 @@ export default {
   padding: 50px 20px;
   text-align: center;
   background-color: #FFFBE6; /* Warna latar krem muda */
+  text-align: center;
+  background-image: url('@/assets/background-batik.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .section-title {
-  color: #C95111;
-  font-size: 2.5em;
-  margin-bottom: 15px;
+  color: #ED652A;
+  font-size: 3em;
+  margin-top: 0;
+  margin-bottom: 1px;
+  font-family: rakkas, cursive;
 }
 
 .section-description {
   max-width: 800px;
   margin: 0 auto 50px;
   line-height: 1.6;
-  color: #666;
+  color: #D97B4A ;
+  font-size: 1.1em;
 }
 
 .cards-grid {
@@ -113,6 +124,7 @@ export default {
   box-shadow: 0 5px 15px rgba(0,0,0,0.05);
   text-align: left;
   transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .info-card:hover {
@@ -129,11 +141,13 @@ export default {
   margin-bottom: 20px;
   color: white;
   font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-title {
   font-size: 1.5em;
   margin-bottom: 15px;
+  font-family: rakkas, cursive;
 }
 
 .card-description {

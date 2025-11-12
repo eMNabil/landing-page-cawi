@@ -1,12 +1,13 @@
 <template>
   <div class="landing-page-container">
-    <TheHeader @start-questionnaire="$emit('start-questionnaire')" />
-    
-    <div class="image-stack">
-      <img class="warna-bg" src="../../assets/gambar-warna.png" alt="Gambar Warna" />
-      <img class="candi-image" src="../../assets/candi.png" alt="Gambar Candi Prambanan" />
+    <div class="header-section">
+      <TheHeader @start-questionnaire="$emit('start-questionnaire')" />
+      
+      <div class="image-stack">
+        <img class="warna-bg" src="../../assets/gambar-warna.png" alt="Gambar Warna" />
+        <img class="candi-image" src="../../assets/candi.png" alt="Gambar Candi Prambanan" />
+      </div>
     </div>
-
     <HowToFill />
     <AboutCAWI/>>
   </div>
@@ -30,19 +31,27 @@ export default {
 
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 .landing-page-container {
   text-align: center;
+  background-image: url('@/assets/background-batik.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #FFFBDF;
 }
 
 /* Container untuk menumpuk gambar */
 .image-stack {
+  padding-top: 4em;
   position: relative;
   width: 100%;
-  max-width: 100%; /* Sesuaikan dengan kebutuhan layout Anda */
-  margin: 20px auto;
-  display: flex;           /* Membantu menengahkan konten jika perlu */
+  max-width: 100%; 
+  margin: auto;
+  display: flex;           
   justify-content: center;
   align-items: center;
+  
 }
 
 /* Gambar latar belakang */
@@ -51,9 +60,9 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;    /* Atau 'auto' tergantung proporsi gambar Anda */
-  object-fit: cover; /* Agar gambar memenuhi area tanpa terdistorsi */
-  z-index: 0;      /* Pastikan layer-nya di bawah */
+  height: 100%;    
+  object-fit: cover; 
+  z-index: 0;     
 }
 
 /* Gambar utama (Candi) */
@@ -64,4 +73,9 @@ export default {
   height: auto;
   display: block;
 }
+
+.header-section {
+  position: relative;
+}
+
 </style>
