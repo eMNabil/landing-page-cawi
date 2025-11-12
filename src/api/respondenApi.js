@@ -4,15 +4,16 @@ const API_URL = `${import.meta.env.VITE_API_BASE_URL}/responden`;
 
 const respondenApi = {
     async setFormLink(link) {
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/set-formPage-link`,link);
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/set-formPage-link`, link);
         return res.data;
     },
-    async generateToken() {
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/generate-token`);
+    // kirim payload { subject, textTemplate } ke backend
+    async sendToken(payload) {
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/send-invitation-bulk`, payload);
         return res.data;
     },
     async setLandingPageLink(link) {
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/set-landingPage-link`,link);
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/link/set-landingPage-link`, link);
         return res.data;
     },
     async getAll() {

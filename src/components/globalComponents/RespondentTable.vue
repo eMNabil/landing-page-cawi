@@ -1,7 +1,7 @@
-    <template>
+<template>
         <div class="p-6 bg-gray-50 min-h-screen">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold text-gray-700">Manajemen Responden</h1>
+                <h1 class="mt-3 text-2xl font-semibold text-gray-700">Manajemen Responden</h1>
                 <div class="flex gap-3">
                     <input v-model="searchQuery" type="text" placeholder="Cari nama atau email..."
                         class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" />
@@ -12,27 +12,24 @@
                         <option value="1">Sudah Digunakan</option>
                     </select>
                     <label for="excel-upload"
-                        class="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                        class="cursor-pointer bg-white-600 text-black px-4 py-2 rounded-lg hover:bg-green-800">
                         Upload Excel
                     </label>
                     <input id="excel-upload" type="file" accept=".xlsx,.xls" class="hidden" ref="fileInput"
                         @change="handleFileUpload" />
 
-                    <button @click="openAddInputDataModal"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                        + Tambah
-                    </button>
+         
                     <button @click="openSetFormLinkModal"
-                        class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                        class="outline-white-100 bg-white-60 text-black px-4 py-2 rounded-lg hover:bg-red-700">
                         Set Form Link
                     </button>
                     <button @click="openSetLandingPageModal"
-                        class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
+                        class="bg-white-600 text-black px-4 py-2 rounded-lg hover:bg-yellow-700">
                         Set LandingPage Link
                     </button>
-                    <button @click="respondenApi.generateToken"
-                        class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
-                        Generate Token
+                    <button @click="openSendConfirmModal"
+                        class="bg-white-600 text-black px-4 py-2 rounded-lg hover:bg-yellow-700">
+                        Kirim Link
                     </button>
                 </div>
 
@@ -44,7 +41,7 @@
                         <tr>
                             <th class="px-4 py-2 text-left">ID</th>
                             <th class="px-4 py-2 text-left">Nama</th>
-                            <th class="px-4 py-2 text-left">Email</th>
+                            <th class="px-4 p   y-2 text-left">Email</th>
                             <th class="px-4 py-2 text-left">Token</th>
                             <th class="px-4 py-2 text-left">Status</th>
                             <th class="px-4 py-2 text-left">Form Link</th>
@@ -71,10 +68,6 @@
                             </td>
                             <td class="px-4 py-2 text-center">
                                 <div class="flex justify-center gap-2">
-                                    <button @click="openEditModal(value)"
-                                        class="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">
-                                        Edit
-                                    </button>
                                     <button @click="deleteResponden(value.id)"
                                         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                                         Hapus
@@ -135,6 +128,76 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal konfirmasi kirim link -->
+            <div v-if="showSendConfirmModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <h2 class="text-lg font-semibold mb-4">Konfirmasi Kirim Link</h2>
+                    <p class="mb-4 text-gray-600">Edit subject dan isi email sebelum mengirim ke semua responden:</p>
+                    
+                    <div class="space-y-4 mb-4">
+                        <!-- Input Subject -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject Email</label>
+                            <input 
+                                v-model="sendSubject" 
+                                type="text"
+                                class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Masukkan subject email..." 
+                            />
+                            <p class="text-xs text-gray-500 mt-1">Gunakan {{nama}} sebagai placeholder untuk nama responden</p>
+                        </div>
+
+                        <!-- Textarea Template -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Isi Email</label>
+                            <textarea 
+                                v-model="sendTemplate" 
+                                rows="8"
+                                class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                                placeholder="Masukkan template email..."
+                            ></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Gunakan {{nama}} untuk nama responden dan {{link}} untuk tautan survei</p>
+                        </div>
+                    </div>
+                    
+
+                     <div class="flex justify-end gap-2">
+                        <button @click="openPreviewModal" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Preview HTML
+                      </button>
+                         <button @click="closeSendConfirmModal" class="px-4 py-2 border rounded hover:bg-gray-100">Batal</button>
+                         <button :disabled="sending" @click="confirmSendToken" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50">
+                             <span v-if="!sending">Ya, Kirim ke Semua</span>
+                            <span v-else>Sedang Mengirim...</span>
+                         </button>
+                     </div>
+                 </div>
+             </div>
+
+            <!-- Modal Preview HTML -->
+            <div v-if="showPreviewModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+               <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <h2 class="text-lg font-semibold mb-4">Preview Email</h2>
+                    
+                    <div class="mb-4">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Subject:</h3>
+                        <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                            <p class="text-gray-800">{{ sendSubject }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Isi Email (Preview Render):</h3>
+                        <div class="bg-white p-4 rounded border border-gray-300 min-h-64">
+                            <div v-html="previewHTML" class="text-gray-800 leading-relaxed"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <button @click="closePreviewModal" class="px-4 py-2 border rounded hover:bg-gray-100">Tutup</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div v-if="showUploadModal"
             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-all duration-300">
@@ -179,141 +242,175 @@
 import { ref, computed, onMounted } from 'vue'
 import * as XLSX from 'xlsx'
 import { respondenApi } from '@/api'
+ 
+ const responden = ref([])
+ const searchQuery = ref('')
+ const filterStatus = ref('')
+ const showInputDataModal = ref(false)
+ const showSetFormLinkModal = ref(false)
+ const showSetLandingPageLinkModal = ref(false)
+ const showSendConfirmModal = ref(false)
+const showPreviewModal = ref(false)
+ const isEditing = ref(false)
+ const form = ref({ id: null, nama: '', email: '' })
+ const Link = ref({link:''})
+ const showUploadModal = ref(false)
+ const previewData = ref([])
+ const fileToUpload = ref(null)
+ const fileInput = ref(null)
+ const sending = ref(false)
+ const sendSubject = ref('Undangan Survei CAWI dari Tim {{nama}}')
+ const sendTemplate = ref(`Yth. Bapak/Ibu {{nama}},\n\nPerkenalkan, kami dari Tim CAWI. Kami mengundang Anda untuk berpartisipasi dalam survei wajib ini.\n\nAnda dapat mengakses survei ini melalui tautan unik di bawah:\n{{link}}\n\nCatatan: Tautan ini unik dan hanya berlaku untuk satu kali sesi pengisian (kecuali Anda menggunakan token sesi yang diberikan setelah validasi pertama).\n\nMohon selesaikan survei sesegera mungkin.\n\nTerima kasih atas waktu dan partisipasi Anda.\n\nSalam hormat,\nTim CAWI`)
+ const previewHTML = ref('')
+ 
+ const loadData = async () => {
+     responden.value = await respondenApi.getAll()
+ }
+ onMounted(loadData)
+ 
+ const formatDate = (date) => new Date(date).toLocaleString('id-ID')
 
-const responden = ref([])
-const searchQuery = ref('')
-const filterStatus = ref('')
-const showInputDataModal = ref(false)
-const showSetFormLinkModal = ref(false)
-const showSetLandingPageLinkModal = ref(false)
-const isEditing = ref(false)
-const form = ref({ id: null, nama: '', email: '' })
-const Link = ref({link:''})
-const showUploadModal = ref(false)
-const previewData = ref([])
-const fileToUpload = ref(null)
-const fileInput = ref(null)
+ const filteredResponden = computed(() =>
+     responden.value.filter(r => {
+         const matchSearch =
+             r.nama?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+             r.email?.toLowerCase().includes(searchQuery.value.toLowerCase())
+         const matchStatus = filterStatus.value === ''
+             ? true
+             : String(r.tautan[0].isUsed) === filterStatus.value
+         return matchSearch && matchStatus
+     })
+ )
 
-const loadData = async () => {
-    responden.value = await respondenApi.getAll()
+ const openAddInputDataModal = () => {
+     isEditing.value = false
+     form.value = { id: null, nama: '', email: '' }
+     showInputDataModal.value = true
+ }
+ const openSetFormLinkModal = () => {
+     isEditing.value = false
+     Link.value = {link: ''}
+     showSetFormLinkModal.value = true
+ }
+ const openSetLandingPageModal = () => {
+     isEditing.value = false
+     Link.value = {link: ''}
+     showSetLandingPageLinkModal.value = true
+ }
+ const openEditModal = (res) => {
+     isEditing.value = true
+     form.value = { ...res }
+     showInputDataModal.value = true
+ }
+ const closeInputDataModal = () => showInputDataModal.value = false
+ const closeSetFormLinkModal = () => showSetFormLinkModal.value = false
+ const closeSetLandingPageLinkModal = () => showSetLandingPageLinkModal.value = false
+ const openSendConfirmModal = () => { showSendConfirmModal.value = true }
+ const closeSendConfirmModal = () => { showSendConfirmModal.value = false }
+const openPreviewModal = () => {
+    // konversi newline ke <br> dan replace placeholder dengan contoh
+    const htmlContent = sendTemplate.value
+        .replace(/\n/g, '<br>')
+        .replace(/{{nama}}/g, '<strong>Nama Responden</strong>')
+        .replace(/{{link}}/g, '<a href="#" style="color: blue; text-decoration: underline;">https://survey.example.com/token</a>')
+    previewHTML.value = htmlContent
+    showPreviewModal.value = true
 }
-onMounted(loadData)
+const closePreviewModal = () => { showPreviewModal.value = false }
+ 
+ const submitInputData = async () => {
+     if (isEditing.value) await respondenApi.update(form.value.id, form.value)
+     else await respondenApi.create(form.value)
+     await loadData()
+     closeInputDataModal()
+ }
+ const submitFormLink = async () => {
+     await respondenApi.setFormLink(Link.value)
+     await loadData();
+     closeSetFormLinkModal()
+ }
+ const submitLandingPageLink = async () => {
+     await respondenApi.setLandingPageLink(Link.value)
+     await loadData();
+     closeSetLandingPageLinkModal()
+ }
+ 
+ const confirmSendToken = async () => {
+     try {
+         sending.value = true
+         // kirim subject & template ke backend
+         const payload = { subject: sendSubject.value, textTemplate: sendTemplate.value }
+         const res = await respondenApi.sendToken(payload)
+         // tampilkan pesan sederhana; sesuaikan dengan respons backend
+         alert(res?.message || 'Pengiriman berhasil.')
+         await loadData()
+     } catch (err) {
+         alert('Gagal mengirim: ' + (err.response?.data?.message || err.message))
+     } finally {
+         sending.value = false
+         closeSendConfirmModal()
+     }
+ }
+ 
+ const deleteResponden = async (id) => {
+     if (confirm('Yakin ingin menghapus responden ini?')) {
+         await respondenApi.remove(id)
+         await loadData()
+     }
+ }
+ 
+ const handleFileUpload = async (event) => {
+     const file = event.target.files[0]
+     if (!file) return
 
-const formatDate = (date) => new Date(date).toLocaleString('id-ID')
+     const validTypes = [
+         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'application/vnd.ms-excel'
+     ]
+     if (!validTypes.includes(file.type)) {
+         alert('Format file tidak valid! Gunakan .xlsx atau .xls')
+         event.target.value = ''
+         return
+     }
 
-const filteredResponden = computed(() =>
-    responden.value.filter(r => {
-        const matchSearch =
-            r.nama?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            r.email?.toLowerCase().includes(searchQuery.value.toLowerCase())
-        const matchStatus = filterStatus.value === ''
-            ? true
-            : String(r.tautan[0].isUsed) === filterStatus.value
-        return matchSearch && matchStatus
-    })
-)
+     // Baca isi Excel tanpa upload ke server dulu
+     const reader = new FileReader()
+     reader.onload = (e) => {
+         const data = new Uint8Array(e.target.result)
+         const workbook = XLSX.read(data, { type: 'array' })
+         const sheetName = workbook.SheetNames[0]
+         const sheet = workbook.Sheets[sheetName]
+         const jsonData = XLSX.utils.sheet_to_json(sheet)
 
-const openAddInputDataModal = () => {
-    isEditing.value = false
-    form.value = { id: null, nama: '', email: '' }
-    showInputDataModal.value = true
-}
-const openSetFormLinkModal = () => {
-    isEditing.value = false
-    Link.value = {link: ''}
-    showSetFormLinkModal.value = true
-}
-const openSetLandingPageModal = () => {
-    isEditing.value = false
-    Link.value = {link: ''}
-    showSetLandingPageLinkModal.value = true
-}
-const openEditModal = (res) => {
-    isEditing.value = true
-    form.value = { ...res }
-    showModal.value = true
-}
-const closeInputDataModal = () => showInputDataModal.value = false
-const closeSetFormLinkModal = () => showSetFormLinkModal.value = false
-const closeSetLandingPageLinkModal = () => showSetLandingPageLinkModal.value = false
+         // ambil hanya 10 baris pertama untuk preview
+         previewData.value = jsonData.slice(0, 10)
+         fileToUpload.value = file
+         showUploadModal.value = true
+     }
+     reader.readAsArrayBuffer(file)
+ }
+ const cancelUpload = () => {
+     showUploadModal.value = false
+     fileToUpload.value = null
+     if (fileInput.value) {
+         fileInput.value.value = ''
+     }
+ }
 
-const submitInputData = async () => {
-    if (isEditing.value) await respondenApi.update(form.value.id, form.value)
-    else await respondenApi.create(form.value)
-    await loadData()
-    closeModal()
-}
-const submitFormLink = async () => {
-    await respondenApi.setFormLink(Link.value)
-    await loadData();
-    closeSetFormLinkModal()
-}
-const submitLandingPageLink = async () => {
-    await respondenApi.setLandingPageLink(Link.value)
-    await loadData();
-    closeSetLandingPageLinkModal()
-}
+ const confirmUpload = async () => {
+     if (!fileToUpload.value) return
 
-
-const deleteResponden = async (id) => {
-    if (confirm('Yakin ingin menghapus responden ini?')) {
-        await respondenApi.remove(id)
-        await loadData()
-    }
-}
-
-const handleFileUpload = async (event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const validTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel'
-    ]
-    if (!validTypes.includes(file.type)) {
-        alert('Format file tidak valid! Gunakan .xlsx atau .xls')
-        event.target.value = ''
-        return
-    }
-
-    // Baca isi Excel tanpa upload ke server dulu
-    const reader = new FileReader()
-    reader.onload = (e) => {
-        const data = new Uint8Array(e.target.result)
-        const workbook = XLSX.read(data, { type: 'array' })
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        const jsonData = XLSX.utils.sheet_to_json(sheet)
-
-        // ambil hanya 10 baris pertama untuk preview
-        previewData.value = jsonData.slice(0, 10)
-        fileToUpload.value = file
-        showUploadModal.value = true
-    }
-    reader.readAsArrayBuffer(file)
-}
-const cancelUpload = () => {
-    showUploadModal.value = false
-    fileToUpload.value = null
-    if (fileInput.value) {
-        fileInput.value.value = ''
-    }
-}
-
-const confirmUpload = async () => {
-    if (!fileToUpload.value) return
-
-    try {
-        const result = await respondenApi.uploadExcel(fileToUpload.value)
-        alert(`Upload berhasil! ${result.count.count} data dimasukkan.`)
-        await loadData()
-    } catch (error) {
-        alert('Gagal upload: ' + (error.response?.data?.message || error.message))
-    } finally {
-        showUploadModal.value = false
-        fileToUpload.value = null
-    }
-}
+     try {
+         const result = await respondenApi.uploadExcel(fileToUpload.value)
+         alert(`Upload berhasil! ${result.count.count} data dimasukkan.`)
+         await loadData()
+     } catch (error) {
+         alert('Gagal upload: ' + (error.response?.data?.message || error.message))
+     } finally {
+         showUploadModal.value = false
+         fileToUpload.value = null
+     }
+ }
 
 
 </script>
